@@ -1,37 +1,29 @@
 using UnityEngine;
 using UnityEngine.UI;
 using AxGrid.Base;
+using AxGrid.Model;
 using AxGrid;
 
-public class SpinButton : MonoBehaviourExt
+public class SpinButton : Binder
 {
     [SerializeField] private Button button;
 
     [OnAwake]
     private void Init()
     {
-        button = gameObject.GetComponent<Button>();
         button.onClick.AddListener(OnClick);
     }
 
-    private void ENABLE_SPIN(bool value)
+    private void OnClick()
     {
-        button.interactable = value;
+        Settings.Fsm?.Invoke(SlotEvents.Spin);
     }
 
-    public void OnClick()
+    // Слушаем модель
+    [Bind]
+    private void SpinButtonActive(bool value)
     {
-        Debug.Log("FSM instance ID from button: " + GameStarter.FSM?.GetHashCode());
-        Debug.Log("FSM is null? " + (GameStarter.FSM == null));
-        Debug.Log("Current state: " + GameStarter.FSM?.CurrentStateName);
-        Debug.Log("Spin clicked");
-        if (GameStarter.FSM == null)
-        {
-            Debug.LogError("FSM IS NULL");
-            return;
-        }
-        if (GameStarter.FSM != null)
-            // Settings.Model.EventManager.Invoke("SPIN");
-            GameStarter.FSM.Invoke("SPIN");
+        Debug.LogWarning("SpinButtonActive Bind: " + value);
+        button.gameObject.SetActive(value);
     }
 }

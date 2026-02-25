@@ -19,7 +19,7 @@ public class SlotFSM : FSM
 
         Start("IdleState");
 
-        Debug.Log("FSM instance ID: " + this.GetHashCode());
+        // Debug.Log("FSM instance ID: " + this.GetHashCode());
         // Debug.Log("States count: " + StatesCount);
         // Debug.Log("Has Idle: " + ContainsState("IdleState"));
         // Debug.Log("Has Starting: " + ContainsState("StartingState"));

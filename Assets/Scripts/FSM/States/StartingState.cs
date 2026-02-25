@@ -1,3 +1,4 @@
+using AxGrid;
 using AxGrid.FSM;
 using UnityEngine;
 
@@ -7,17 +8,13 @@ public class StartingState : FSMState
     [Enter]
     private void OnEnter()
     {
-        Debug.Log("Entered StartingState");
-        Parent.Invoke("ENABLE_START", false);
-        Parent.Invoke("ENABLE_STOP", false);
-        Parent.Invoke("SPIN_START");
+        GameEvents.OnSpinStart?.Invoke();
+        // Debug.Log("Enter Starting");
+        // Settings.Model.Set("SpinAvailable", false);
+        // Parent.Invoke(SlotEvents.SpinVisible, false);  // не работает
+        // Parent.Invoke(SlotEvents.StopInteractable, false);
+        // Parent.Invoke(SlotEvents.SpinStart); 
 
-        Parent.InvokeDelayAsync(3f, "ENABLE_STOP_PHASE");
         Parent.Change("SpinningState");
-    }
-
-    public void ENABLE_STOP_PHASE()
-    {
-        Parent.Change("CanStopState");
     }
 }

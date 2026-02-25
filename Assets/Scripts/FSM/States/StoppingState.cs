@@ -1,4 +1,6 @@
+using System.Collections;
 using AxGrid.FSM;
+using AxGrid.Model;
 using UnityEngine;
 
 [State("StoppingState")]
@@ -7,12 +9,15 @@ public class StoppingState : FSMState
     [Enter]
     private void OnEnter()
     {
-        Debug.Log("Entered StoppingState");
-        Parent.Invoke("ENABLE_STOP", false);
-        Parent.Invoke("STOP_REELS");
+        // Debug.Log("Enter Stopping");
+        GameEvents.OnStop?.Invoke();
+        // Parent.Invoke(SlotEvents.StopReels);   // не работает
+
+        Parent.InvokeDelayAsync(3f, "STOP_COMPLETE");
     }
 
-    public void SPIN_FINISHED()
+    [Bind]
+    public void STOP_COMPLETE()
     {
         Parent.Change("StoppedState");
     }

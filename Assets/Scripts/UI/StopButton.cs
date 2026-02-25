@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using AxGrid.Base;
 using AxGrid;
+using AxGrid.Model;
 
 public class StopButton : MonoBehaviourExt
 {
@@ -10,20 +11,19 @@ public class StopButton : MonoBehaviourExt
     [OnAwake]
     private void Init()
     {
-        button = gameObject.GetComponent<Button>();
-        button.interactable = false;
         button.onClick.AddListener(OnClick);
     }
 
-    private void ENABLE_STOP(bool value)
+    [Bind]
+    public void STOP_INTERACTABLE(bool value)
     {
+        Debug.Log("Stop Button " + value);
         button.interactable = value;
     }
 
     public void OnClick()
     {
-        Debug.Log("Stop clicked");
         if (GameStarter.FSM != null)
-            Settings.Model.EventManager.Invoke("STOP");
+            GameStarter.FSM.Invoke(SlotEvents.Stop);
     }
 }

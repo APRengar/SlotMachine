@@ -277,27 +277,49 @@ namespace AxGrid.FSM
         }
 
         ///// AsyncEventManager replaced with direct reflection invoke because project does not use full AxGrid lifecycle 
-        // public void __Invoke(string eventName, object[] args)
-        // {
-        //     asm.Invoke(eventName, args);
-        // }
-        public void __Invoke(string eventName, params object[] args)
+        public void __Invoke(string eventName, object[] args)
         {
-            var method = GetType().GetMethod(eventName,
-                System.Reflection.BindingFlags.Instance |
-                System.Reflection.BindingFlags.Public |
-                System.Reflection.BindingFlags.NonPublic);
-
-            if (method != null)
-            {
-                method.Invoke(this, args);
-            }
-        }
-        
+            asm.Invoke(eventName, args);
+        }      
         public void __InvokeDelayAsync(float delay, string eventName, object[] args)
         {
             asm.InvokeDelayAsync(delay, eventName, args);
         }
+
+        // public void __Invoke(string eventName, params object[] args)  //тут  тестировал работу через рефлексию напрямую
+        // {
+        //     var method = GetType().GetMethod(eventName,
+        //         System.Reflection.BindingFlags.Instance |
+        //         System.Reflection.BindingFlags.Public |
+        //         System.Reflection.BindingFlags.NonPublic);
+
+        //     if (method != null)
+        //     {
+        //         method.Invoke(this, args);
+        //     }
+        //         // проброс наружу
+        //     var sceneMethod = GameStarter.Instance?
+        //         .GetType()
+        //         .GetMethod(eventName);
+
+        //     if (sceneMethod != null)
+        //         sceneMethod.Invoke(GameStarter.Instance, args);
+        // }
+
+        // public void __Invoke(string eventName, object[] args) // тут связываем FSMState с EventManager из Settings
+        // {
+        //     Settings.Model?.EventManager?.Invoke(eventName, args);
+        // }
+
+        // public void __InvokeDelayAsync(float delay, string eventName, object[] args)
+        // {
+        //     Settings.Model?.EventManager?.InvokeDelayAsync(delay, eventName, args);
+        // }
+
+        // public void SendToScene(string eventName, params object[] args)
+        // {
+        //     Settings.Model?.EventManager?.Invoke(eventName, args);
+        // }
 
         public void Dispose()
         {
@@ -322,6 +344,8 @@ namespace AxGrid.FSM
 
         public void __UpdateState(float deltaTime)
         {
+            asm.Update(deltaTime);
+
             foreach (var m in updates)
                 m.Invoke(deltaTime);
             foreach (var t in timers)

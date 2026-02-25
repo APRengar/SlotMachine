@@ -1,4 +1,5 @@
 using AxGrid.FSM;
+using AxGrid.Model;
 using UnityEngine;
 
 [State("SpinningState")]
@@ -7,16 +8,21 @@ public class SpinningState : FSMState
     [Enter]
     private void OnEnter()
     {
-        Debug.Log("Entered SpinningState");
-        Parent.Invoke(SlotEvents.EnableSpin, false);
-        Parent.Invoke(SlotEvents.EnableStop, true);
-        Parent.InvokeDelayAsync(2f, "CAN_STOP");
+        // Debug.Log("Enter Spinning");
+        Parent.InvokeDelayAsync(3f, "ENABLE_STOP");
+        
     }
 
-    [Exit]
-    private void OnExit()
+    [Bind]
+    public void ENABLE_STOP()
     {
-        // Parent.Invoke(SlotEvents.EnableSpin, true);
-        Parent.Invoke(SlotEvents.EnableStop, false);
+        // Debug.Log("Enable Stop");
+        Parent.Change("CanStopState");
+    }
+    
+    [Bind]
+    public void STOP()
+    {
+        // если нажали раньше 3 сек — игнор
     }
 }

@@ -1,4 +1,6 @@
+using AxGrid;
 using AxGrid.FSM;
+using AxGrid.Model;
 using UnityEngine;
 
 [State("IdleState")]
@@ -7,14 +9,17 @@ public class IdleState : FSMState
     [Enter]
     private void OnEnter()
     {
-        Debug.Log("IdleState");
-        Parent.Invoke("ENABLE_START", true);
-        Parent.Invoke("ENABLE_STOP", false);
+        // Debug.Log("Enter Idle");
+        
+        GameEvents.OnIdle?.Invoke();
+
+        // Parent.Invoke(SlotEvents.SpinVisible, true);  // не работает
+        // Parent.Invoke(SlotEvents.StopInteractable, false);
     }
 
+    [Bind]
     public void SPIN()
     {
-        Debug.Log("SPIN method exists");
         Parent.Change("StartingState");
     }
 }

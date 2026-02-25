@@ -276,9 +276,22 @@ namespace AxGrid.FSM
             asm.Add(this);
         }
 
-        public void __Invoke(string eventName, object[] args)
+        ///// AsyncEventManager replaced with direct reflection invoke because project does not use full AxGrid lifecycle 
+        // public void __Invoke(string eventName, object[] args)
+        // {
+        //     asm.Invoke(eventName, args);
+        // }
+        public void __Invoke(string eventName, params object[] args)
         {
-            asm.Invoke(eventName, args);
+            var method = GetType().GetMethod(eventName,
+                System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.Public |
+                System.Reflection.BindingFlags.NonPublic);
+
+            if (method != null)
+            {
+                method.Invoke(this, args);
+            }
         }
         
         public void __InvokeDelayAsync(float delay, string eventName, object[] args)

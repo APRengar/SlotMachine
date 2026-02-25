@@ -215,5 +215,7 @@ namespace AxGrid.FSM
                 kv.Value.Dispose();
             _states.Clear();
         }
+        
+        // public int StatesCount => _states.Count;
     }
 }

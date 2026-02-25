@@ -12,8 +12,8 @@ public class SlotGameManager : MonoBehaviour
     [SerializeField] private ReelManager reelManager;
 
     [Header("Effects")]
-    [SerializeField] private ParticleSystem spinningEffect;
-    [SerializeField] private ParticleSystem winEffect;
+    [SerializeField] private ParticleSystem[] spinningEffect;
+    [SerializeField] private ParticleSystem[] winEffect;
 
     private Coroutine spinRoutine;
 
@@ -23,6 +23,7 @@ public class SlotGameManager : MonoBehaviour
         GameEvents.OnSpinStart += HandleSpinStart;
         GameEvents.OnCanStop += HandleCanStop;
         GameEvents.OnStop += HandleStop;
+        reelManager.OnReelStopped += HandleReelStopped;
     }
 
     private void OnDisable()
@@ -46,7 +47,10 @@ public class SlotGameManager : MonoBehaviour
 
         int randomResult = Random.Range(0, 6);
         spinRoutine = StartCoroutine(reelManager.SpinCoroutine(randomResult));
-        // spinningEffect?.Play();
+        foreach (ParticleSystem effect in spinningEffect)
+        {
+            effect.Play();
+        }
     }
 
     private void HandleCanStop()
@@ -58,6 +62,18 @@ public class SlotGameManager : MonoBehaviour
     {
         stopButton.interactable = false;
         reelManager.RequestStop();
-        // winEffect?.Play();
+    }
+
+
+    private void HandleReelStopped()
+    {
+        foreach (ParticleSystem effect in spinningEffect)
+        {
+            effect.Stop();
+        }
+        foreach (ParticleSystem effect in winEffect)
+        {
+            effect.Play();
+        }
     }
 }

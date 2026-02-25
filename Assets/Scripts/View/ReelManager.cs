@@ -25,8 +25,17 @@ public class ReelManager : MonoBehaviour
     [SerializeField] private float bounceTime = 0.15f;
 
     [Header("Audio")]
+    private float distanceAccumulated;
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip stopClip;
+
+    [Header("Tick Sound")]
+    [SerializeField] private AudioClip tickClip;
+    [SerializeField] private float tickVolume = 0.25f;
+
+    private float lastTickPosition;
+
+    public System.Action OnReelStopped;
 
     private float currentSpeed;
     private bool requestStop;
@@ -134,6 +143,7 @@ public class ReelManager : MonoBehaviour
             s.anchoredPosition =
                 new Vector2(s.anchoredPosition.x, snapped);
         }
+        OnReelStopped?.Invoke();
     }
 
     private float GetDistanceToTarget()
@@ -155,6 +165,7 @@ public class ReelManager : MonoBehaviour
 
     // ==================================================
 
+
     private void MoveSymbols(float speed)
     {
         foreach (var symbol in symbols)
@@ -163,6 +174,15 @@ public class ReelManager : MonoBehaviour
         }
 
         LoopSymbols();
+        float delta = currentSpeed * Time.deltaTime;
+        distanceAccumulated += delta;
+
+        if (distanceAccumulated >= symbolHeight)
+        {
+            distanceAccumulated -= symbolHeight;
+            PlayTick();
+        }
+        // CheckTick();
     }
 
     private void LoopSymbols()
@@ -183,6 +203,33 @@ public class ReelManager : MonoBehaviour
         }
     }
 
+    private void CheckTick()
+    {
+        foreach (var symbol in symbols)
+        {
+            if (symbol.anchoredPosition.y < symbolHeight * 0.5f &&
+                symbol.anchoredPosition.y > -symbolHeight * 0.5f)
+            {
+                float currentPos = symbol.anchoredPosition.y;
+
+                
+                if (Mathf.Abs(currentPos) < symbolHeight * 0.1f)
+                {
+                    PlayTick();
+                    break; 
+                }
+            }
+        }
+    }
+
+    private void PlayTick()
+    {
+        if (tickClip != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(tickClip, tickVolume);
+        }
+    }
+
     private float GetHighestY()
     {
         float max = float.MinValue;
@@ -193,4 +240,6 @@ public class ReelManager : MonoBehaviour
 
         return max;
     }
-}
+
+
+    }
